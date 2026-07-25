@@ -3,12 +3,13 @@ import { getQuestion } from '../questions';
 
 export default function LevelUp({ mageLevel, onLevelUp, onBack }) {
   const nextTier = mageLevel + 1;
-  const [mode, setMode] = useState('choose'); // choose | quiz | pay | promo
+  const [mode, setMode] = useState('choose'); // choose | quiz | pay | paymethod | promo
   const [question] = useState(() => getQuestion(nextTier));
   const [selected, setSelected] = useState(null);
   const [feedback, setFeedback] = useState('');
   const [promoInput, setPromoInput] = useState('');
   const [promoError, setPromoError] = useState('');
+  const [payProcessing, setPayProcessing] = useState(false);
 
   const handleAnswer = () => {
     if (selected === null) return;
@@ -28,9 +29,17 @@ export default function LevelUp({ mageLevel, onLevelUp, onBack }) {
     }
   };
 
-  const handlePay = () => {
-    setFeedback('Payment of $100 processed. Promotion granted.');
-    setTimeout(() => onLevelUp(nextTier), 1200);
+  const handlePayGpay = () => {
+    setPayProcessing(true);
+    setTimeout(() => {
+      setPayProcessing(false);
+      setFeedback('Payment of $100 processed. Promotion granted.');
+      setTimeout(() => onLevelUp(nextTier), 1200);
+    }, 1500);
+  };
+
+  const handlePayCode = () => {
+    setMode('promo');
   };
 
   const handlePromo = () => {
@@ -61,7 +70,7 @@ export default function LevelUp({ mageLevel, onLevelUp, onBack }) {
               Solve a Mathematical Proof
             </button>
             <button className="btn pay-btn" onClick={() => setMode('pay')}>
-              Pay $100 to Skip (Fake Currency)
+              Pay $100 to Skip
             </button>
             <div className="promo-section">
               <button
@@ -119,12 +128,23 @@ export default function LevelUp({ mageLevel, onLevelUp, onBack }) {
               <p className="pay-amount">$100</p>
               <p className="pay-desc">Instant promotion to {TierName(nextTier)}</p>
               <p className="pay-fine">*No real currency is exchanged.</p>
-              {feedback ? (
+              {payProcessing ? (
+                <div className="loading-box">
+                  <div className="spinner" />
+                  <p>Processing payment…</p>
+                </div>
+              ) : feedback ? (
                 <p className="feedback success">{feedback}</p>
               ) : (
-                <button className="btn primary" onClick={handlePay}>
-                  Pay $100
-                </button>
+                <div className="pay-method-choices">
+                  <p className="pay-method-label">How would you like to pay?</p>
+                  <button className="btn primary" onClick={handlePayGpay}>
+                    Gpay
+                  </button>
+                  <button className="btn secondary" onClick={handlePayCode}>
+                    Code
+                  </button>
+                </div>
               )}
             </div>
           </div>

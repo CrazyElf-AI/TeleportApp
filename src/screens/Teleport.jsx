@@ -7,7 +7,7 @@ const FAILURES = [
 ];
 
 export default function Teleport({ profile, mana, setMana, onBack, onDenied }) {
-  const [stage, setStage] = useState('channel'); // channel | full | fail | calculus
+  const [stage, setStage] = useState('channel');
   const [failureMsg] = useState(
     () => FAILURES[Math.floor(Math.random() * FAILURES.length)]
   );
@@ -40,7 +40,25 @@ export default function Teleport({ profile, mana, setMana, onBack, onDenied }) {
   };
 
   const handleProceed = () => {
+    setStage('warning');
+  };
+
+  const handleAcceptRisk = () => {
     setStage('calculus');
+  };
+
+  const handleSellSoul = () => {
+    setStage('demon_contact');
+    setTimeout(() => {
+      setStage('demon_offer');
+    }, 2500);
+  };
+
+  const handleConfirmSellSoul = () => {
+    setStage('demon_processing');
+    setTimeout(() => {
+      setStage('demon_reject');
+    }, 3000);
   };
 
   const handleFinalSubmit = () => {
@@ -49,11 +67,6 @@ export default function Teleport({ profile, mana, setMana, onBack, onDenied }) {
     setTimeout(() => {
       onDenied();
     }, 1500);
-  };
-
-  const handlePayMana = () => {
-    setMana(1000);
-    setStage('full');
   };
 
   const handlePromoMana = () => {
@@ -89,7 +102,7 @@ export default function Teleport({ profile, mana, setMana, onBack, onDenied }) {
               <p className="mana-text">{mana} / 1000 MP</p>
             </div>
             <p className="channeling-hint">
-              Channeling… Please wait while your mana reserves fill.
+              Channeling... Please wait while your mana reserves fill.
             </p>
           </div>
         )}
@@ -122,11 +135,93 @@ export default function Teleport({ profile, mana, setMana, onBack, onDenied }) {
           </div>
         )}
 
+        {stage === 'warning' && (
+          <div className="warning-section">
+            <div className="warning-box">
+              <p className="warning-label">Warning</p>
+              <p className="warning-message">
+                Proceeding outside standard protocol is <strong>risky</strong>.
+                You might lose even more aura. This decision cannot be undone.
+              </p>
+              <p className="warning-sub">Do you accept?</p>
+            </div>
+            <div className="warning-actions">
+              <button className="btn proceed-btn" onClick={handleAcceptRisk}>
+                Accept Risk
+              </button>
+              <button className="btn demon-btn" onClick={handleSellSoul}>
+                Guaranteed Teleport (Sell Soul to the Demon)
+              </button>
+              <button
+                className="btn secondary"
+                onClick={() => setStage('fail')}
+              >
+                Go Back
+              </button>
+            </div>
+          </div>
+        )}
+
+        {stage === 'demon_contact' && (
+          <div className="demon-section">
+            <div className="loading-box">
+              <div className="spinner demon-spinner" />
+              <p className="demon-loading-text">Contacting Demon...</p>
+            </div>
+          </div>
+        )}
+
+        {stage === 'demon_offer' && (
+          <div className="demon-section">
+            <div className="demon-box">
+              <p className="demon-avatar">&#x1F608;</p>
+              <p className="demon-speaks">Diablo here.</p>
+              <p className="demon-sub">
+                I sense a soul ripe for the taking. Speak — what do you desire?
+              </p>
+              <button className="btn demon-btn" onClick={handleConfirmSellSoul}>
+                SELL SOUL
+              </button>
+            </div>
+          </div>
+        )}
+
+        {stage === 'demon_processing' && (
+          <div className="demon-section">
+            <div className="loading-box">
+              <div className="spinner demon-spinner" />
+              <p className="demon-loading-text">Processing soul transaction...</p>
+            </div>
+          </div>
+        )}
+
+        {stage === 'demon_reject' && (
+          <div className="demon-section">
+            <div className="demon-box reject">
+              <p className="demon-avatar">&#x1F608;</p>
+              <p className="demon-speaks reject-title">Nope.</p>
+              <p className="demon-sub reject-msg">
+                Diablo says: <strong>Mahar detected. Soul rejected.</strong>
+              </p>
+              <p className="demon-sub">
+                Dalit souls are not permitted through this gateway.
+                Take it up with the Interdimensional Caste Bureau.
+              </p>
+              <button
+                className="btn primary"
+                onClick={() => {
+                  setStage('fail');
+                }}
+              >
+                Return to Portal
+              </button>
+            </div>
+          </div>
+        )}
+
         {stage === 'calculus' && (
           <div className="calculus-section">
-            <p className="calculus-header">
-              Final Verification Required
-            </p>
+            <p className="calculus-header">Final Verification Required</p>
             <p className="question">{finalQ.question}</p>
             <div className="options">
               {finalQ.options.map((opt, i) => (
@@ -147,7 +242,7 @@ export default function Teleport({ profile, mana, setMana, onBack, onDenied }) {
                 onClick={handleFinalSubmit}
                 disabled={finalAnswer === null}
               >
-                Submit & Complete Teleportation
+                Submit and Complete Teleportation
               </button>
             )}
           </div>
