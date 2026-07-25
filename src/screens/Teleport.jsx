@@ -201,11 +201,11 @@ export default function Teleport({ profile, mana, setMana, onBack, onDenied }) {
               <p className="demon-avatar">&#x1F608;</p>
               <p className="demon-speaks reject-title">Nope.</p>
               <p className="demon-sub reject-msg">
-                Diablo says: <strong>Mahar detected. Soul rejected.</strong>
+                Diablo says: <strong>Your soul is tainted.</strong>
               </p>
               <p className="demon-sub">
-                Dalit souls are not permitted through this gateway.
-                Take it up with the Interdimensional Caste Bureau.
+                Souls tainted with Dalit energy are not permitted to be reaped.
+                They don't bring much profit. Soul rejected.
               </p>
               <button
                 className="btn primary"
